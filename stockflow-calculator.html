@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>StockFlow Loss Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      /* Fonts & base */
+      body {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        background-color: #e6e6f6;
+        padding: 2rem 1.5rem 6rem;
+        max-width: 600px;
+        margin: auto;
+        color: #222;
+      }
+      h1 {
+        color: #1e4da1;
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 0.25em;
+        font-weight: 700;
+        background: linear-gradient(135deg, #b62192, #1775c5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+      }
+      @media (max-width: 680px) {
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
+      h3 {
+        color: #3a3a3a;
+        font-weight: 500;
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      label {
+        font-weight: 600;
+        margin-top: 1.25rem;
+        display: block;
+        color: #444;
+        font-size: 1rem;
+      }
+      p {
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+        color: #555;
+        line-height: 1.4;
+      }
+      input,
+      select,
+      button {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        margin-top: 0.3rem;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #c0c0c0;
+        border-radius: 10px;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgb(0 0 0 / 0.05);
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #5a68d7;
+        box-shadow: 0 0 8px #a0aefb88;
+      }
+      select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%231e4da1" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 18px;
+        padding-right: 3rem;
+      }
+      button {
+        background: linear-gradient(135deg, #6f2ab4, #9f59e1);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1.15rem;
+        box-shadow: 0 5px 15px rgb(111 42 180 / 0.4);
+        border-radius: 50px;
+        transition: background 0.3s ease;
+      }
+      button:hover {
+        background: linear-gradient(135deg, #58248f, #7b3fc8);
+        box-shadow: 0 7px 18px rgb(111 42 180 / 0.6);
+      }
+      #customAdContainer {
+        display: none;
+      }
+      .result {
+        margin-top: 2rem;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #222;
+        text-align: center;
+        line-height: 1.3;
+        user-select: none;
+      }
+      .result strong {
+        /* Gradient text */
+        /* background: linear-gradient(90deg, #6f2ab4, #9f59e1); */
+        background: linear-gradient(90deg, #bc374d, #e08c08);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+        font-size: 2rem;
+        display: inline-block;
+        margin: 0 0.1em;
+      }
+      .cta {
+        margin-top: 1rem;
+        text-align: center;
+      }
+      .cta a {
+        display: inline-block;
+        background: linear-gradient(135deg, #6f2ab4, #9f59e1);
+        color: white;
+        padding: 16px 32px;
+        font-weight: 700;
+        border-radius: 54px;
+        text-decoration: none;
+        font-size: 1.1rem;
+        box-shadow: 0 6px 18px rgb(111 42 180 / 0.5);
+        transition: box-shadow 0.3s ease;
+        margin-top: 3rem;
+      }
+      .cta a:hover {
+        box-shadow: 0 8px 24px rgb(111 42 180 / 0.7);
+      }
+      img {
+        max-width: 200px;
+        display: block;
+        margin: 0 auto 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="stockflow-logo.png" alt="StockFlow Logo" />
+    <h1>Out Of Stock Calculator</h1>
+
+    <h3>How much is being out of stock costing you?</h3>
+
+    <p>
+      Use the calculator below to get a rough idea of how much revenue you are
+      missing out on per month due to being out of stock.
+    </p>
+
+    <label for="stockoutDays">
+      How many days per month do you have at least one product out of stock?
+    </label>
+    <input type="number" id="stockoutDays" value="5" min="0" />
+
+    <label for="avgProfit">
+      What’s your average daily profit from those products (£)?
+    </label>
+    <input type="number" id="avgProfit" value="50" min="0" step="0.01" />
+
+    <label for="adSpend">
+      Do you spend money on ads that send traffic to out-of-stock products?
+    </label>
+    <select id="adSpend" onchange="handleAdSpendChange()">
+      <option value="0">No</option>
+      <option value="100">A little (£100)</option>
+      <option value="500">A lot (£500)</option>
+      <option value="custom">Custom amount</option>
+    </select>
+
+    <div id="customAdContainer">
+      <label for="customAd">Enter your custom monthly ad spend (£)</label>
+      <input type="number" id="customAd" min="0" step="0.01" />
+    </div>
+
+    <button onclick="calculateLoss()">Calculate My Monthly Loss</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+      function handleAdSpendChange() {
+        const adSpend = document.getElementById("adSpend").value;
+        const customContainer = document.getElementById("customAdContainer");
+        customContainer.style.display = adSpend === "custom" ? "block" : "none";
+      }
+
+      function getEmoji(totalLoss) {
+        if (totalLoss >= 2000) return "🤯";
+        if (totalLoss >= 1000) return "🥵";
+        if (totalLoss >= 500) return "😖";
+        if (totalLoss >= 200) return "😬";
+        return "😅";
+      }
+
+      function calculateLoss() {
+        const days =
+          parseInt(document.getElementById("stockoutDays").value) || 0;
+        const profit =
+          parseFloat(document.getElementById("avgProfit").value) || 0;
+        const adSpendOption = document.getElementById("adSpend").value;
+
+        let adSpend = 0;
+        if (adSpendOption === "custom") {
+          adSpend = parseFloat(document.getElementById("customAd").value) || 0;
+        } else {
+          adSpend = parseFloat(adSpendOption) || 0;
+        }
+
+        const lostSales = days * profit;
+        const totalLoss = lostSales + adSpend;
+        const emoji = getEmoji(totalLoss);
+
+        document.getElementById(
+          "result"
+        ).innerHTML = `${emoji} You're potentially losing <strong>£${totalLoss.toFixed(
+          2
+        )}</strong> per month.<br><br>
+        <div class="cta">StockFlow automatically switches out of stock items to pre-orders with real dispatch dates, so you can keep selling with no lost revenue.<br>
+        <a href="https://www.stockflow.co" target="_blank" rel="noopener">Start A Free Trial Today →</a></div>`;
+      }
+    </script>
+  </body>
+</html>
